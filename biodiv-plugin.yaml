@@ -1,0 +1,156 @@
+## FAIR-Checker demonstration biodiversity plugin. 
+# 
+# This plugin gives tailored recommendations when evaluating biodiversity resources
+
+name: "FAIR-Checker demonstration biodiversity plugin"
+api_route: "demo-biodiv"
+version: "0.0.1"
+author: "Brieuc Quemeneur"
+description: "The FAIR-Checker demonstration biodiversity plugin allows to illustrate how the plugin structure works in Fair-Checker as well as the overall structure of the plugin"
+
+depends_on:
+  fair_checker:
+    version: "v1.4.0"
+
+metrics:
+  a11:
+    tag: "A11"
+    name: "Open resolution protocol"
+    principle: "Accessibility"
+    description: "FAIR-Checker verifies that the resource is accessible via an open protocol, for instance the protocol needs to be HTTP"
+    rules:
+      ## This rule needs improvements. Might not be very clear for someone that doesn't touch to FC code directly
+      rule1:
+        name: "HTTP access verification"
+        types:
+          - "query"
+        values:
+          - "200"
+    recommendations:
+      weak: "Make sure that the BioSample metadata can be accessed using an open and broadly implementable protocol access through open, standardized protocols such as HTTPS (for example: https://www.ebi.ac.uk/biosamples/samples?text=SAMEA1234567)."
+      strong: "Ensure that the resource is accessible using the provided URL (typos ? dead link ? other reason ?)"
+
+  a12:
+    tag: "A12"
+    name: "Authorisation procedure or access rights"
+    principle: "Accessibility"
+    description: "The protocol allows for an authentification and authorization procedure when necessary. FAIR-Checker verifies if access rights are specified in the metadata through the presence of the terms ordl:hasPolicy, dct:rights, dct:accessRight, schema:license or dct:license"
+    rules:
+      rule1:
+        name: "License presence and acess right verification"
+        types: 
+          - "at_least_one_of"
+        terms:
+          - "odrl:hasPolicy"
+          - "dct:rights"
+          - "dct:accessRights"
+          - "dct:license"
+          - "schema:license"
+    recommendations:
+      weak: "Make sure that the BioSample is publicly accessible and does not require any authentication/authorization mechanism."
+
+  f1a:
+    tag: "F1A"
+    name: "Unique IDs"
+    principle: "Findability"
+    description: "Unique IDs: checks if the resource identifier is a reachable URL"
+    recommendations:
+      weak: "Ensure that your BioSample has a globally unique and persistent ENA identifier and that the identifier is expressed as a resolvable URL. An example of a BioSample accession is SAMEA120424589."
+
+  f1b:
+    tag: "F1B"
+    name: "Persistent IDs"
+    principle: "Findability"
+    description: "Persistent IDs : checks if the resource identifier is persistance (DOI, WebId, Purl)"
+    recommendations:
+      weak: "Ensure that the BioSample's persistent identifier is explicitly associated with its metadata so that the metadata can be unambiguously linked to the resource it describes. If you are unsure about this, check your BioSample accession in https://www.ebi.ac.uk/biosamples/. "
+
+  f2a:
+    tag: "F2A"
+    name: "Structured metadata"
+    principle: "Findability"
+    description: "Structured metadata: checks if at least one RDF triple can be found in metadata and checks at least one property in dct:title dct:description dct:accessURL dct:downloadURL dcat:endpointURL dcat:endpointDescription is present in the RDF metadata triples"
+    recommendations:
+      weak: "Provide sufficiently rich and relevant metadata to describe the BioSample and its context. Avoid providing only the minimum metadata required for submission"
+      strong: "You should provide discoverability oriented metadata with one of the following properties: dct:title dct:description dct:accessURL dct:downloadURL dcat:endpointURL dcat:endpointDescription."
+
+  f2b:
+    tag: "F2B"
+    name: "Shared vocabularies for metadata"
+    principle: "Findability"
+    description: "Ontology reuse: checks if the ontologies present the RDF triples are present in major ontology repositories (such as Bioportal, LOV and OLS)"
+    recommendations:
+      weak: "Enrich the BioSample metadata with relevant contextual attributes to distinguish your BioSample and contextualize the resource."
+      strong: "You should express all your metadata with classes and properties coming from interoperable ontologies and vocabularies use https://www.ebi.ac.uk/ols/index, https://bioportal.bioontology.org, https://lov.linkeddata.es/dataset/lov/ to find the most suitable classes you want to use. Learn more in the https://faircookbook.elixir-europe.org/content/recipes/interoperability/selecting-ontologies.html "
+
+  i1:
+    tag: "I1"
+    name: "Machine readable format"
+    principle: "Interoperability"
+    description: "Machine readibility: checks if at least one RDF triple can be found in metadata."
+    recommendations:
+      weak: "Represent important BioSample metadata attributes using structured, machine-readable formats and established community standards. Avoid encoding important information solely in free-text descriptions where it cannot be reliably interpreted by machines."
+      strong: "To ensure that the used identification scheme is persistent, you should build your resource ID with a namespace that can be found in Identifiers.org  (life-science oriented registry). Examples of persistent identifiers for a UniProt entry is: https://identifiers.org/uniprot:P38938 with uniprot as namespace or for a PubMed publication https://identifiers.org/pubmed/23584831 with pubmed as namespace, or DOI. This identifier can be either the URL itself or encoded in the metadata as a dct:identifier or schema:identifier property."
+
+  i2:
+    tag: "I2"
+    name: "Use shared ontologies"
+    principle: "Interoperability"
+    description: "Use shared ontologies: checks if the ontologies present the RDF triples are present in major ontology repositories (such as Bioportal, LOV and OLS"
+    recommendations:
+      weak: "Use established, community-recognized vocabularies or ontologies for metadata values wherever possible. Prefer standardized terms with persistent identifiers over free-text variants or locally defined terms. You can use the Environmental Ontology as a starting point: https://www.ebi.ac.uk/ols4/ontologies/envo."
+      strong: "Your metadata seem to not be conforming to the researched format, which is RDF (Resource Description Framework),  Resource Description Framework a W3C standard specification for representing information in the form of subject / predicate / object statements known as triples. This structured format enable links between multiple data on the web using controlled vocabularies, learn more here: https://www.w3.org/TR/rdf11-primer/"
+
+  i3:
+    tag: "I3"
+    name: "External links"
+    principle: "Interoperability"
+    description: "External links: checks if at least 3 different URL authorities are used in the URIs of RDF metadata."
+    recommendations: 
+      weak: "Make sure that the BioSample has explicit, machine-readable relationships to relevant associated resources, such as studies, experiments, sequencing runs, publications, datasets, taxonomic concepts, or other samples. Use persistent identifiers where available."
+
+  r11:
+    tag: "R11"
+    name: "Metadata includes license"
+    principle: "Reusability"
+    description: "Metadata includes license: checks if a license is present in the metadata RDF triple"
+    recommendations:
+      weak: "Clearly state the terms under which the BioSample metadata and associated data may be accessed, reused, and redistributed. Where possible, provide a standard, machine-readable license identifier rather than relying on an ambiguous free-text statement."
+
+  r12:
+    tag: "R12"
+    name: "Metadata includes provenance"
+    principle: "Reusability"
+    description: "Metadata includes provenance: checks if at least one provenance property from PROV, DCTerms, or PAV ontologies are found in metadata."
+    recommendations: 
+      weak: "Document the provenance of the BioSample, including its collection context, responsible organization or contributor, collection event, processing history, and relationships to associated studies or derived datasets. Use persistent identifiers for provenance-related entities where possible."
+
+  r13:
+    tag: "R13"
+    name: "Community standards"
+    principle: "Reusability"
+    description: "Community standards: checks if the ontologies present the RDF triples are present in major ontology repositories (such as Bioportal, LOV and OLS)"
+    recommendations:
+      weak: "Describe the BioSample using relevant community standards and recommended metadata schemas. Where applicable, use established biodiversity and genomics standards rather than creating project-specific metadata structures."
+      strong: "You should express all your metadata with classes and properties coming from interoperable ontologies and vocabularies use https://www.ebi.ac.uk/ols/index, https://bioportal.bioontology.org, https://lov.linkeddata.es/dataset/lov/ to find the most suitable classes you want to use. Learn more in the https://faircookbook.elixir-europe.org/content/recipes/interoperability/selecting-ontologies.html"
+
+
+resource_examples:
+  erga:
+    name: "ERGA Biosample"
+    url: "https://www.ncbi.nlm.nih.gov/biosample/SAMEA112797446/"
+  ibol:
+    name: "iBOL Dataset"
+    url: "https://doi.org/10.5883/DP-Latest"
+  lifewatchEric:
+    name: "LifeWatch ERIC Dataset"
+    url: "https://metadatacatalogue.lifewatch.eu/srv/eng/catalog.search#/metadata/dc512697-ed50-40c5-a3cd-1774000444b9"
+  elter:
+    name: "eLTER Record"
+    url: "https://doi.org/10.82159/gt66-zt98"
+  dissco:
+    name: "DiSSCo Digital Specimen"
+    url: "https://doi.org/10.3535/ZVR-CRA-1Y1?noredirect"
+  ggbn:
+    name: "GGBN Sample"
+    url: "https://id.ggbn.org/2ZBR8K"
