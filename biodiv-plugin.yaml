@@ -2,7 +2,7 @@
 # 
 # This plugin gives tailored recommendations when evaluating biodiversity resources
 
-name: "FAIR-Checker demonstration biodiversity plugin"
+name: "FAIR-Checker biodiversity biosample genome plugin"
 api_route: "demo-biodiv"
 version: "0.0.1"
 author: "Brieuc Quemeneur"
